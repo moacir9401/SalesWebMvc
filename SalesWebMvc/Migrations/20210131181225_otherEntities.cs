@@ -18,15 +18,15 @@ namespace SalesWebMvc.Migrations
                     Email = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     BirthDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     baseSalary = table.Column<double>(type: "double", nullable: false),
-                    DepartamentId = table.Column<int>(type: "int", nullable: true)
+                    DepartmentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Seller", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Seller_Departament_DepartamentId",
-                        column: x => x.DepartamentId,
-                        principalTable: "Departament",
+                        name: "FK_Seller_Department_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Department",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -59,9 +59,9 @@ namespace SalesWebMvc.Migrations
                 column: "SellerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Seller_DepartamentId",
+                name: "IX_Seller_DepartmentId",
                 table: "Seller",
-                column: "DepartamentId");
+                column: "DepartmentId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
