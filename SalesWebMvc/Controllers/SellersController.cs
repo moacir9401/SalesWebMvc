@@ -46,7 +46,7 @@ namespace SalesWebMvc.Controllers
 
             if (!ModelState.IsValid) return View(viewModel);
 
-           await _sellerService.InsertAsync(seller);
+            await _sellerService.InsertAsync(seller);
             return RedirectToAction(nameof(Index));
         }
 
@@ -65,13 +65,20 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _sellerService.RemoveAsync(id);
+            try
+            {
+                await _sellerService.RemoveAsync(id);
+            }
+            catch (IntegrityException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return RedirectToAction(nameof(Error), new { message = "Id not provided"});
+            if (id == null) return RedirectToAction(nameof(Error), new { message = "Id not provided" });
 
             var obj = await _sellerService.FindByIdAsync(id.Value);
 
@@ -89,7 +96,7 @@ namespace SalesWebMvc.Controllers
             if (obj == null) return RedirectToAction(nameof(Error), new { message = "Id not found" });
 
             List<Department> departments = await _departmentService.FindAllAsync();
-            SellerFormViewModel viewModel = new SellerFormViewModel() { Seller = obj,Departments = departments };
+            SellerFormViewModel viewModel = new SellerFormViewModel() { Seller = obj, Departments = departments };
 
             return View(viewModel);
         }
@@ -107,14 +114,14 @@ namespace SalesWebMvc.Controllers
             if (id != seller.Id) return RedirectToAction(nameof(Error), new { message = "Id mismatch" });
             try
             {
-               await _sellerService.UpdateAsync(seller);
+                await _sellerService.UpdateAsync(seller);
 
                 return RedirectToAction(nameof(Index));
             }
             catch (ApplicationException ex)
             {
-                return RedirectToAction(nameof(Error), new { message = ex.Message});
-            } 
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
         }
 
         public IActionResult Error(string message)
